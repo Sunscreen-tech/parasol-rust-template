@@ -8,8 +8,11 @@ contract Counter {
     bytes public publicKey;
     FHE fhe;
 
-    constructor(bytes memory _publicKey) {
+    constructor() {
         fhe = new FHE();
+    }
+
+    function setPublicKey(bytes memory _publicKey) public {
         publicKey = _publicKey;
     }
 

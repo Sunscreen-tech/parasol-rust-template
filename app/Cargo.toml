@@ -7,6 +7,8 @@ edition = "2021"
 
 [dependencies]
 bindings = { path = "../bindings" }
+clap = "4.3"
 ethers = { version = "2", default-features = false, features = ["rustls"] }
 eyre = "0.6"
+sunscreen_web3 = { git = "https://github.com/Sunscreen-tech/sunscreen_web3", rev = "51065c1983347191ae1e300d89fe0344afb2b89f" }
 tokio = { version = "1.19", features = ["macros"] }

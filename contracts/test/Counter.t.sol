@@ -10,7 +10,8 @@ contract CounterTest is Test {
     function setUp() public {
         bytes memory pubk = vm.readFileBinary("test/data/public_key.pub");
         bytes memory zero_enc = vm.readFileBinary("test/data/zero.bin");
-        counter = new Counter(pubk);
+        counter = new Counter();
+        counter.setPublicKey(pubk);
         counter.setNumber(zero_enc);
     }
 

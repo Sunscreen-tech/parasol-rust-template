@@ -1,15 +1,10 @@
-# Foundry Rust Monorepo Template
+# Parasol Rust Monorepo Template
 
-![Rust](https://github.com/gakonst/foundry-rust-template/workflows/Rust/badge.svg)
-![Solidity](https://github.com/gakonst/foundry-rust-template/workflows/Solidity/badge.svg)
-[![Telegram Chat][tg-badge]][tg-url]
+![Rust](https://github.com/Sunscreen-tech/parasol-rust-template/workflows/Rust/badge.svg)
+![Solidity](https://github.com/Sunscreen-tech/parasol-rust-template/workflows/Solidity/badge.svg)
 
-[tg-badge]:
-  https://img.shields.io/endpoint?color=neon&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2Ffoundry_rs
-[tg-url]: https://t.me/foundry_rs
-
-**Template for quickly getting started with developing Rust applications that
-leverage Foundry for EVM smart contract development.**
+**A template for quickly getting started with developing Rust applications that
+leverage FHE for smart contract development.**
 
 Continuous Integration is already set up to test both your Rust and Solidity
 code, as well as ensure formatting and that your Rust bindings match the
@@ -35,7 +30,7 @@ workflows.
 
 ### Solidity
 
-Forge is using submodules to manage dependencies. Initialize the dependencies:
+Forge uses submodules to manage dependencies. Initialize the dependencies:
 
 ```bash
 forge install
@@ -75,18 +70,18 @@ the `--overwrite` flag to your `forge bind` command.
 
 ## Installing Foundry
 
-First run the command below to get `foundryup`, the Foundry toolchain installer:
+First, you'll need `cargo`; if you don't have it, the easiest way is to install
+via `rustup`:
 
 ```sh
-curl -L https://foundry.paradigm.xyz | bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Then, in a new terminal session or after reloading your `PATH`, run it to get
-the latest `forge` and `cast` binaries:
+Then you can install our foundry fork:
 
 ```sh
-foundryup
+cargo install --git https://github.com/Sunscreen-tech/foundry --profile local forge cast anvil
 ```
 
-For more, see the official
-[docs](https://github.com/gakonst/foundry#installation).
+For more info on foundry, see the official
+[docs](https://book.getfoundry.sh/).

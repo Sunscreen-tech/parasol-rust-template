@@ -8,17 +8,21 @@ contract CounterTest is Test {
     Counter public counter;
 
     function setUp() public {
-        counter = new Counter();
-        counter.setNumber(0);
+        bytes memory pubk = vm.readFileBinary("test/data/public_key.pub");
+        bytes memory zero_enc = vm.readFileBinary("test/data/zero.bin");
+        counter = new Counter(pubk);
+        counter.setNumber(zero_enc);
     }
 
     function testIncrement() public {
+        bytes memory one_enc = vm.readFileBinary("test/data/one.bin");
         counter.increment();
-        assertEq(counter.number(), 1);
+        assertEq(counter.number(), one_enc);
     }
 
-    function testSetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
+    function testSetNumber() public {
+        bytes memory one_enc = vm.readFileBinary("test/data/one.bin");
+        counter.setNumber(one_enc);
+        assertEq(counter.number(), one_enc);
     }
 }

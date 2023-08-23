@@ -1,14 +1,23 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-contract Counter {
-    uint256 public number;
+import "sunscreen/src/FHE.sol";
 
-    function setNumber(uint256 newNumber) public {
-        number = newNumber;
+contract Counter {
+    bytes public number;
+    bytes public publicKey;
+    FHE fhe;
+
+    constructor(bytes memory _publicKey) {
+        fhe = new FHE();
+        publicKey = _publicKey;
+    }
+
+    function setNumber(bytes memory _number) public {
+        number = _number;
     }
 
     function increment() public {
-        number++;
+        number = fhe.addUint256EncPlain(publicKey, number, 1);
     }
 }

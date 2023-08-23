@@ -3,4 +3,5 @@ src = 'src'
 out = 'out'
 libs = ['lib']
 solc_version = "0.8.19"
+fs_permissions = [{ access = "read", path = "test/data" }]
 memory_limit = 8446744073709551615

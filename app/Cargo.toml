@@ -11,7 +11,5 @@ bindings = { path = "../bindings" }
 clap = { version = "4.3", features = ["derive"] }
 ethers = { version = "2", default-features = false, features = ["rustls"] }
 eyre = "0.6"
-# sunscreen_web3 = { git = "https://github.com/Sunscreen-tech/sunscreen_web3", rev = "51065c1983347191ae1e300d89fe0344afb2b89f" }
+sunscreen_web3 = { git = "https://github.com/Sunscreen-tech/sunscreen_web3", rev = "a485b29e5c46602700e39d5e6f7bda4f9d69ff3a" }
 tokio = { version = "1.19", features = ["macros"] }
-
-sunscreen_web3 = { path = "../../sunscreen_web3" }

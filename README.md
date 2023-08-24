@@ -23,6 +23,23 @@ The project is structured as a mixed Rust workspace with a Foundry project under
 ├── bindings // <-- Generated bindings to the smart contracts' abis (like Typechain)
 ```
 
+## Installing Foundry
+
+First, you'll need `cargo`; if you don't have it, the easiest way is to install via `rustup`:
+
+```sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+Then you can install our foundry fork:
+
+```sh
+cargo install --git https://github.com/Sunscreen-tech/foundry --profile local forge cast anvil
+```
+
+For more info on foundry, see the official
+[docs](https://book.getfoundry.sh/).
+
 ## Testing
 
 Given the repository contains both Solidity and Rust code, there's 2 different
@@ -67,21 +84,3 @@ forge bind --bindings-path ./bindings --root ./contracts --crate-name bindings
 Any follow-on calls to `forge bind` will check that the generated bindings match
 the ones under the build files. If you want to re-generate your bindings, pass
 the `--overwrite` flag to your `forge bind` command.
-
-## Installing Foundry
-
-First, you'll need `cargo`; if you don't have it, the easiest way is to install
-via `rustup`:
-
-```sh
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-Then you can install our foundry fork:
-
-```sh
-cargo install --git https://github.com/Sunscreen-tech/foundry --profile local forge cast anvil
-```
-
-For more info on foundry, see the official
-[docs](https://book.getfoundry.sh/).

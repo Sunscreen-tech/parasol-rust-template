@@ -11,10 +11,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Foundry
-        uses: onbjerg/foundry-toolchain@v1
+      - uses: Swatinem/rust-cache@v2
         with:
-          version: nightly
+          cache-on-failure: true
+
+      - name: Install forge
+        run: |
+          cargo install \
+            --git https://github.com/Sunscreen-tech/foundry \
+            --profile local forge
 
       - name: Install deps
         working-directory: contracts
@@ -29,10 +34,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install Foundry
-        uses: onbjerg/foundry-toolchain@v1
-        with:
-          version: nightly
+      - name: Install forge
+        run: |
+          cargo install \
+            --git https://github.com/Sunscreen-tech/foundry \
+            --profile local forge
 
       - name: Pull library deps
         working-directory: contracts

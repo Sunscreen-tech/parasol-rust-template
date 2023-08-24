@@ -1,12 +1,15 @@
 [package]
-name = "app"
+name = "counter-cli"
 version = "0.1.0"
 edition = "2021"
+description = "A CLI for interacting with the Counter contract on Parasol"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 bindings = { path = "../bindings" }
+clap = { version = "4.3", features = ["derive"] }
 ethers = { version = "2", default-features = false, features = ["rustls"] }
 eyre = "0.6"
-tokio = { version = "1.19", features = ["macros"] }
+sunscreen_web3 = { git = "https://github.com/Sunscreen-tech/sunscreen_web3" }
+tokio = { version = "1.19", features = ["macros", "rt-multi-thread"] }

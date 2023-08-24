@@ -45,12 +45,6 @@ struct Args {
     command: Commands,
 }
 
-// 10. Deploying contract
-// 11. Gen admin parasol keys
-// 12. Go to faucet with pub key
-// 13. Do deploy (script? or cli bindings?) maybe in this case clients are also contract owners, in which case cli bindings.
-// 14. Instruct user to save the deployed contract address and save it as a constant in the client code.
-
 #[derive(Debug, Subcommand)]
 enum Commands {
     /// Generate keys

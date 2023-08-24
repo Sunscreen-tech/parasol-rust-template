@@ -120,9 +120,9 @@ struct KeyStore {
 }
 
 impl KeyStore {
-    const WALLET_PATH: &str = "wallet.sk";
-    const PRIVATE_KEY_PATH: &str = "fhe.pri";
-    const PUBLIC_KEY_PATH: &str = "fhe.pub";
+    const WALLET_PATH: &'static str = "wallet.sk";
+    const PRIVATE_KEY_PATH: &'static str = "fhe.pri";
+    const PUBLIC_KEY_PATH: &'static str = "fhe.pub";
 
     /// Generate new keys and save them to the specified directory.
     fn generate(parent_dir: PathBuf, force: bool) -> Result<Self> {

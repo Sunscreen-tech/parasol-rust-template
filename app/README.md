@@ -6,6 +6,7 @@ directly on the Parasol network.
 # usage
 
 ### Generate keys to start
+
 Generate a parasol account and an FHE keypair. By default this will store keys
 under a `.keys` directory:
 
@@ -16,12 +17,11 @@ Head to https://faucet.sunscreen.tech/?address=0x3ca28c3a100651a38789ddaec115e0a
 ```
 
 ### Fund your account!
-To start, your new wallet has no money. Follow the link in the output to get some SPETH
-currency so that you can deploy the contract.
+
+To start, your new wallet has no currency. Follow the link in the output to get
+some SPETH currency so that you can deploy the contract.
 
 ### Deploy the counter contract
-To start, your new wallet has no money. Follow the link to get some SPETH
-currency so that you can deploy the contract.
 
 ```sh
 $ cargo run -- deploy
@@ -33,6 +33,7 @@ Initialized counter to zero
 Copy the contract address to call the methods on it below.
 
 ### Verify the counter is zero
+
 The contract counter state is _encrypted_. Use your local private key to decrypt
 the value:
 
@@ -42,6 +43,7 @@ Current counter value: 0
 ```
 
 ### Increment the counter
+
 Use homomorphic addition to increment the counter a couple times:
 
 ```sh
@@ -50,6 +52,7 @@ $ cargo run -- increment --contract-address 0x19dbbd8998f2bcf4b1fe13d2e53b2b258a
 ```
 
 ### Decrypt the counter
+
 Decrypt the counter again to see the current value:
 
 ```sh

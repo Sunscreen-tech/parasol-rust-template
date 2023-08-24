@@ -1,5 +1,3 @@
 [workspace]
-members = [
-    "bindings",
-    "app",
-]
+resolver = "2"
+members = ["bindings", "app"]

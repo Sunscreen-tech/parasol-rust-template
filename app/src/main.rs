@@ -148,7 +148,7 @@ impl KeyStore {
         // Log messages to the user
         eprintln!("Saved new keys under directory {}", parent_dir.display());
         eprintln!(
-            "Head to {}?address={:?} for some free Gamma!",
+            "Head to {}?address={:?} for some free SPETH!",
             PARASOL.faucet_url,
             wallet.address()
         );

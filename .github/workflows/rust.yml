@@ -21,11 +21,37 @@ jobs:
         with:
           cache-on-failure: true
 
-      - name: Install anvil
+      - name: Clone foundry
+        uses: actions/checkout@v3
+        with:
+          repository: Sunscreen-tech/foundry
+          path: foundry
+
+      - name: Get foundry hash
+        id: foundry-hash
+        working-directory: foundry
         run: |
-          cargo install \
-            --git https://github.com/Sunscreen-tech/foundry \
-            --profile local anvil
+          echo "hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: Cache - restore anvil binary
+        id: cache
+        uses: actions/cache/restore@v3
+        with:
+          path: ~/.cargo/bin/anvil
+          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-anvil
+
+      - name: Install anvil
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          cargo install --path ./foundry/crates/anvil --profile local --force
+
+      - name: Cache - save anvil binary
+        uses: actions/cache/save@v3
+        if: always()
+        with:
+          path: ~/.cargo/bin/anvil
+          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-anvil
 
       - name: cargo test
         run: cargo test --workspace --all-features

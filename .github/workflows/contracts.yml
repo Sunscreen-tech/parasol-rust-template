@@ -38,7 +38,7 @@ jobs:
       - name: Install forge
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          cargo install --path ./foundry/crates/forge --profile local --force
+          cargo install --path ./foundry/crates/forge --profile local --force --locked
 
       - name: Cache - save forge binary
         uses: actions/cache/save@v3
@@ -83,7 +83,7 @@ jobs:
       - name: Install forge
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          cargo install --path ./foundry/crates/forge --profile local --force
+          cargo install --path ./foundry/crates/forge --profile local --force --locked
 
       - name: Cache - save forge binary
         uses: actions/cache/save@v3

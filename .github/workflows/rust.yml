@@ -44,7 +44,7 @@ jobs:
       - name: Install anvil
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          cargo install --path ./foundry/crates/anvil --profile local --force
+          cargo install --path ./foundry/crates/anvil --profile local --force --locked
 
       - name: Cache - save anvil binary
         uses: actions/cache/save@v3

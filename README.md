@@ -34,7 +34,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 Then you can install our foundry fork:
 
 ```sh
-cargo install --git https://github.com/Sunscreen-tech/foundry --profile local forge cast anvil
+cargo install --git https://github.com/Sunscreen-tech/foundry --locked --profile local forge cast anvil
 ```
 
 For more info on foundry, see the official

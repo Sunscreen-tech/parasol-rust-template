@@ -6,4 +6,3 @@
 pub mod bytes;
 pub mod counter;
 pub mod fhe;
-pub mod zuckland;

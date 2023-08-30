@@ -23,7 +23,7 @@ The project is structured as a mixed Rust workspace with a Foundry project under
 ├── bindings // <-- Generated bindings to the smart contracts' ABIs (like Typechain)
 ```
 
-## Installing Foundry
+## Using `Anvil` as a local testnet
 
 First, you'll need `cargo`; if you don't have it, the easiest way is to install via `rustup`:
 
@@ -39,6 +39,14 @@ cargo install --git https://github.com/Sunscreen-tech/foundry --profile local fo
 
 For more info on foundry, see the official
 [docs](https://book.getfoundry.sh/).
+
+To start your a local testnet:
+
+```sh
+anvil
+```
+
+Your network is ready! You will have 10 accounts and 10 private keys available for use. If you didn't change any defaults, your network should be available at http://127.0.0.1:8545 with Chain ID 31337.
 
 ## Testing
 

@@ -8,13 +8,11 @@ use ethers::{
     signers::{LocalWallet, Signer},
     types::Address,
 };
+use eyre::{bail, Result};
 use sunscreen_web3::{
-    testnet::parasol::{generate_keys, RUNTIME},
+    testnet::parasol::{generate_keys, PARASOL, RUNTIME},
     AsBytes, AsFile, AsNum, Ciphertext, PrivateKey, PublicKey, SignedMiddleware, Unsigned256,
 };
-
-use eyre::{bail, Result};
-use sunscreen_web3::testnet::parasol::PARASOL;
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq, PartialOrd, Ord, ValueEnum)]
 enum NetworkOption {

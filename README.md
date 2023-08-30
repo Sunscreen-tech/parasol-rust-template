@@ -20,7 +20,7 @@ The project is structured as a mixed Rust workspace with a Foundry project under
 ├── Cargo.toml
 ├── app // <-- Your Rust application logic
 ├── contracts // <- The smart contracts + tests using Foundry
-├── bindings // <-- Generated bindings to the smart contracts' abis (like Typechain)
+├── bindings // <-- Generated bindings to the smart contracts' ABIs (like Typechain)
 ```
 
 ## Installing Foundry

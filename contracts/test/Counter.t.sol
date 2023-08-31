@@ -6,24 +6,36 @@ import "../src/Counter.sol";
 
 contract CounterTest is Test {
     Counter public counter;
+    FHE public fhe;
 
     function setUp() public {
-        bytes memory pubk = vm.readFileBinary("test/data/public_key.pub");
-        bytes memory zero_enc = vm.readFileBinary("test/data/zero.bin");
         counter = new Counter();
-        counter.setPublicKey(pubk);
-        counter.setNumber(zero_enc);
+        fhe = new FHE();
     }
 
     function testIncrement() public {
-        bytes memory one_enc = vm.readFileBinary("test/data/one.bin");
+        // Inc to 2
         counter.increment();
-        assertEq(counter.number(), one_enc);
+        counter.increment();
+
+        // Decrypt
+        bytes memory current_number_enc = counter.number();
+        uint256 current_number = fhe.decryptUint256(current_number_enc);
+
+        assertEq(current_number, 2);
     }
 
     function testSetNumber() public {
-        bytes memory one_enc = vm.readFileBinary("test/data/one.bin");
-        counter.setNumber(one_enc);
-        assertEq(counter.number(), one_enc);
+        // Set to 100
+        counter.setNumber(100);
+
+        // Inc to 101
+        counter.increment();
+
+        // Decrypt
+        bytes memory current_number_enc = counter.number();
+        uint256 current_number = fhe.decryptUint256(current_number_enc);
+
+        assertEq(current_number, 101);
     }
 }

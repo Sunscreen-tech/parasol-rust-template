@@ -5,22 +5,22 @@ import "sunscreen/src/FHE.sol";
 
 contract Counter {
     bytes public number;
-    bytes public publicKey;
     FHE fhe;
 
     constructor() {
         fhe = new FHE();
+        number = fhe.encryptUint256(0);
     }
 
-    function setPublicKey(bytes memory _publicKey) public {
-        publicKey = _publicKey;
-    }
-
-    function setNumber(bytes memory _number) public {
-        number = _number;
+    function setNumber(uint256 _number) public {
+        number = fhe.encryptUint256(_number);
     }
 
     function increment() public {
-        number = fhe.addUint256EncPlain(publicKey, number, 1);
+        number = fhe.addUint256EncPlain(fhe.networkPublicKey(), number, 1);
+    }
+
+    function reencryptNumber(bytes memory publicKey) public view returns (bytes memory) {
+        return fhe.reencryptUint256(publicKey, number);
     }
 }

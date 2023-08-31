@@ -84,14 +84,6 @@ async fn main() -> Result<()> {
             let client = keys.client(args.network)?;
             let contract_addr = Counter::deploy(Arc::clone(&client), ())?.send().await?.address();
             eprintln!("Contract deployed at address {:#?}", contract_addr);
-
-            let counter = Counter::new(contract_addr, client);
-            counter.set_public_key(keys.public_key.as_bytes()?).send().await?.await?;
-            eprintln!("Assigned public key to contract");
-
-            let zero_enc = RUNTIME.encrypt(Unsigned256::from(0), &keys.public_key)?;
-            counter.set_number(zero_enc.as_bytes()?).send().await?.await?;
-            eprintln!("Initialized counter to zero");
         }
         Commands::Increment { contract_address } => {
             let keys = KeyStore::init(args.key_store, args.wallet_key)?;
@@ -101,7 +93,7 @@ async fn main() -> Result<()> {
         Commands::Decrypt { contract_address } => {
             let keys = KeyStore::init(args.key_store, args.wallet_key)?;
             let counter = keys.contract(args.network, contract_address)?;
-            let value_enc = counter.number().call().await?;
+            let value_enc = counter.reencrypt_number(keys.public_key.as_bytes()?).call().await?;
             let value: Unsigned256 =
                 RUNTIME.decrypt(&Ciphertext::from_bytes(&value_enc)?, &keys.private_key)?;
             eprintln!("Current counter value: {}", value.to())
@@ -211,12 +203,6 @@ mod tests {
             let client = Arc::new(node.client(wallet));
             let contract_addr = Counter::deploy(Arc::clone(&client), ())?.send().await?.address();
             let counter = Counter::new(contract_addr, client);
-            counter
-                .set_public_key(public_key.as_bytes()?)
-                .send()
-                .await?
-                .log_msg("Pending transfer hash")
-                .await?;
             Ok(Self { counter, private_key, public_key, _node: node })
         }
     }
@@ -225,13 +211,10 @@ mod tests {
     async fn counter_works() -> Result<()> {
         let Test { counter, private_key, public_key, _node } = Test::new().await?;
 
-        let zero_enc = RUNTIME.encrypt(Unsigned256::from(0), &public_key)?;
-
-        counter.set_number(zero_enc.as_bytes()?).send().await?.log().await?;
         counter.increment().send().await?.log().await?;
         counter.increment().send().await?.log().await?;
 
-        let two_enc = counter.number().call().await?;
+        let two_enc = counter.reencrypt_number(public_key.as_bytes()?).call().await?;
         let two: Unsigned256 = RUNTIME.decrypt(&Ciphertext::from_bytes(&two_enc)?, &private_key)?;
 
         assert_eq!(two, Unsigned256::from(2));

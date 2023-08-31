@@ -26,8 +26,6 @@ some SPETH currency so that you can deploy the contract.
 ```sh
 $ cargo run -- deploy
 Contract deployed at address 0x19dbbd8998f2bcf4b1fe13d2e53b2b258a7ada65
-Assigned public key to contract
-Initialized counter to zero
 ```
 
 Copy the contract address to call the methods on it below.

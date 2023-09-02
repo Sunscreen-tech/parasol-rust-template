@@ -52,9 +52,6 @@ enum Commands {
         force: bool,
     },
 
-    /// Deploy counter contract to the network
-    Deploy,
-
     /// Increment the counter
     Increment {
         /// Address of deployed counter contract
@@ -77,13 +74,18 @@ async fn main() -> Result<()> {
 
     match args.command {
         Commands::Gen { force } => {
-            KeyStore::generate(args.key_store, force)?;
-        }
-        Commands::Deploy => {
-            let keys = KeyStore::init(args.key_store, args.wallet_key)?;
-            let client = keys.client(args.network)?;
-            let contract_addr = Counter::deploy(Arc::clone(&client), ())?.send().await?.address();
-            eprintln!("Contract deployed at address {:#?}", contract_addr);
+            let keys = KeyStore::generate(&args.key_store, force)?;
+
+            // Log messages to the user
+            eprintln!("Saved new keys under directory {}", args.key_store.display());
+            match args.network {
+                NetworkOption::Parasol => eprintln!(
+                    "Head to {}?address={:?} for some free SPETH!",
+                    PARASOL.faucet_url,
+                    keys.wallet.address()
+                ),
+                _ => {}
+            }
         }
         Commands::Increment { contract_address } => {
             let keys = KeyStore::init(args.key_store, args.wallet_key)?;
@@ -115,7 +117,7 @@ impl KeyStore {
     const PUBLIC_KEY_PATH: &'static str = "fhe.pub";
 
     /// Generate new keys and save them to the specified directory.
-    fn generate(parent_dir: PathBuf, force: bool) -> Result<Self> {
+    fn generate(parent_dir: &PathBuf, force: bool) -> Result<Self> {
         // Throw errors if necessary
         if !force {
             for file in [Self::WALLET_PATH, Self::PRIVATE_KEY_PATH, Self::PUBLIC_KEY_PATH] {
@@ -134,15 +136,6 @@ impl KeyStore {
         public_key.write(parent_dir.join(Self::PUBLIC_KEY_PATH))?;
         private_key.write(parent_dir.join(Self::PRIVATE_KEY_PATH))?;
         wallet.write(parent_dir.join(Self::WALLET_PATH))?;
-
-        // Log messages to the user
-        eprintln!("Saved new keys under directory {}", parent_dir.display());
-        eprintln!(
-            "Head to {}?address={:?} for some free SPETH!",
-            PARASOL.faucet_url,
-            wallet.address()
-        );
-
         Ok(Self { wallet, public_key, private_key })
     }
 

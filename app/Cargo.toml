@@ -13,3 +13,6 @@ ethers = { version = "2", default-features = false, features = ["rustls"] }
 eyre = "0.6"
 sunscreen_web3 = { git = "https://github.com/Sunscreen-tech/sunscreen_web3" }
 tokio = { version = "1.19", features = ["macros", "rt-multi-thread"] }
+
+[dev-dependencies]
+serde_json = "1.0"

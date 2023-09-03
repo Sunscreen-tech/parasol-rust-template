@@ -177,7 +177,11 @@ impl KeyStore {
 #[cfg(test)]
 mod tests {
 
+    use std::process::Command;
+
     use super::*;
+    use ethers::utils::hex::ToHex;
+    use serde_json::Value;
     use sunscreen_web3::testing::Node;
 
     struct Test {
@@ -193,10 +197,54 @@ mod tests {
             let node = Node::spawn();
             let (public_key, private_key) = generate_keys()?;
             let wallet: LocalWallet = node.anvil.keys()[0].clone().into();
+            let contract_addr = Self::deploy(&node, &wallet)?;
             let client = Arc::new(node.client(wallet));
-            let contract_addr = Counter::deploy(Arc::clone(&client), ())?.send().await?.address();
             let counter = Counter::new(contract_addr, client);
             Ok(Self { counter, private_key, public_key, _node: node })
+        }
+
+        fn deploy(node: &Node, wallet: &LocalWallet) -> Result<Address> {
+            let private_key = wallet.signer().to_bytes().encode_hex::<String>();
+            let rpc_url = node.anvil.endpoint();
+            let chain = format!("{}", node.anvil.chain_id());
+
+            // Deploy FHE.sol
+            let sunscreen_contracts_path =
+                concat!(env!("CARGO_MANIFEST_DIR"), "/../contracts/lib/sunscreen-contracts");
+            let json_output = Command::new("forge")
+                .arg("create")
+                .arg("--json")
+                .args(["--rpc-url", &rpc_url])
+                .args(["--chain", &chain])
+                .args(["--private-key", &private_key])
+                .args(["--root", sunscreen_contracts_path])
+                .arg("./src/FHE.sol:FHE")
+                .output()?
+                .stdout;
+            let json_val: Value = serde_json::from_slice(&json_output)?;
+            let fhe_addr =
+                json_val.get("deployedTo").expect("obj").as_str().expect("address string");
+
+            // Deploy Counter.sol
+            let lib_link = format!("lib/sunscreen-contracts/src/FHE.sol:FHE:{fhe_addr}");
+            let contracts_path = concat!(env!("CARGO_MANIFEST_DIR"), "/../contracts");
+            let json_output = Command::new("forge")
+                .arg("create")
+                .arg("--json")
+                .args(["--rpc-url", &rpc_url])
+                .args(["--chain", &chain])
+                .args(["--private-key", &private_key])
+                .args(["--root", contracts_path])
+                .args(["--libraries", &lib_link])
+                .arg("./src/Counter.sol:Counter")
+                .output()?
+                .stdout;
+
+            let json_val: Value = serde_json::from_slice(&json_output)?;
+            let counter_addr =
+                json_val.get("deployedTo").expect("obj").as_str().expect("address string");
+
+            Ok(Address::from_str(counter_addr)?)
         }
     }
 

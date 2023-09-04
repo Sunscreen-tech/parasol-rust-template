@@ -40,8 +40,8 @@ jobs:
       - name: Install foundry binaries
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          cargo install --path ./foundry/crates/anvil --profile local --force --locked
-          cargo install --path ./foundry/crates/forge --profile local --force --locked
+          cargo install --path ./foundry/crates/anvil --profile dev --force --locked
+          cargo install --path ./foundry/crates/forge --profile dev --force --locked
 
       - name: Cache - save foundry binaries
         uses: actions/cache/save@v3
@@ -88,7 +88,7 @@ jobs:
       - name: Install forge
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          cargo install --path ./foundry/crates/forge --profile local --force --locked
+          cargo install --path ./foundry/crates/forge --profile dev --force --locked
 
       - name: Cache - save forge binary
         uses: actions/cache/save@v3

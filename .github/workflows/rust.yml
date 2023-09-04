@@ -41,7 +41,7 @@ jobs:
           path: |
             ~/.cargo/bin/anvil
             ~/.cargo/bin/forge
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-foundry
+          key: ${{ runner.os }}-foundry-${{ steps.foundry-hash.outputs.hash }}
 
       - name: Install foundry binaries
         if: steps.cache.outputs.cache-hit != 'true'
@@ -51,12 +51,12 @@ jobs:
 
       - name: Cache - save foundry binaries
         uses: actions/cache/save@v3
-        if: always()
+        if: steps.cache.outputs.cache-hit != 'true'
         with:
           path: |
             ~/.cargo/bin/anvil
             ~/.cargo/bin/forge
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-foundry
+          key: ${{ runner.os }}-foundry-${{ steps.foundry-hash.outputs.hash }}
 
       - name: cargo test
         run: cargo test --workspace --all-features

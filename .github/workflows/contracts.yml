@@ -35,7 +35,7 @@ jobs:
           path: |
             ~/.cargo/bin/anvil
             ~/.cargo/bin/forge
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-foundry
+          key: ${{ runner.os }}-foundry-${{ steps.foundry-hash.outputs.hash }}
 
       - name: Install foundry binaries
         if: steps.cache.outputs.cache-hit != 'true'
@@ -45,12 +45,12 @@ jobs:
 
       - name: Cache - save foundry binaries
         uses: actions/cache/save@v3
-        if: always()
+        if: steps.cache.outputs.cache-hit != 'true'
         with:
           path: |
             ~/.cargo/bin/anvil
             ~/.cargo/bin/forge
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-foundry
+          key: ${{ runner.os }}-foundry-${{ steps.foundry-hash.outputs.hash }}
 
       - name: Install deps
         working-directory: contracts
@@ -83,7 +83,7 @@ jobs:
         uses: actions/cache/restore@v3
         with:
           path: ~/.cargo/bin/forge
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-forge
+          key: ${{ runner.os }}-forge-${{ steps.foundry-hash.outputs.hash }}
 
       - name: Install forge
         if: steps.cache.outputs.cache-hit != 'true'
@@ -95,7 +95,7 @@ jobs:
         if: always()
         with:
           path: ~/.cargo/bin/forge
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-forge
+          key: ${{ runner.os }}-forge-${{ steps.foundry-hash.outputs.hash }}
 
       - name: Pull library deps
         working-directory: contracts

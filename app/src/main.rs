@@ -1,4 +1,9 @@
-use std::{fs, path::PathBuf, str::FromStr, sync::Arc};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+    str::FromStr,
+    sync::Arc,
+};
 
 use bindings::counter::Counter;
 use clap::{Parser, Subcommand, ValueEnum};
@@ -78,13 +83,12 @@ async fn main() -> Result<()> {
 
             // Log messages to the user
             eprintln!("Saved new keys under directory {}", args.key_store.display());
-            match args.network {
-                NetworkOption::Parasol => eprintln!(
+            if args.network == NetworkOption::Parasol {
+                eprintln!(
                     "Head to {}?address={:?} for some free SPETH!",
                     PARASOL.faucet_url,
                     keys.wallet.address()
-                ),
-                _ => {}
+                );
             }
         }
         Commands::Increment { contract_address } => {
@@ -117,7 +121,7 @@ impl KeyStore {
     const PUBLIC_KEY_PATH: &'static str = "fhe.pub";
 
     /// Generate new keys and save them to the specified directory.
-    fn generate(parent_dir: &PathBuf, force: bool) -> Result<Self> {
+    fn generate(parent_dir: &Path, force: bool) -> Result<Self> {
         // Throw errors if necessary
         if !force {
             for file in [Self::WALLET_PATH, Self::PRIVATE_KEY_PATH, Self::PUBLIC_KEY_PATH] {

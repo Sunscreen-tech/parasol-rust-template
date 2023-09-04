@@ -34,24 +34,29 @@ jobs:
           echo "hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Cache - restore anvil binary
+      - name: Cache - restore foundry binaries
         id: cache
         uses: actions/cache/restore@v3
         with:
-          path: ~/.cargo/bin/anvil
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-anvil
+          path: |
+            ~/.cargo/bin/anvil
+            ~/.cargo/bin/forge
+          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-foundry
 
-      - name: Install anvil
+      - name: Install foundry binaries
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           cargo install --path ./foundry/crates/anvil --profile local --force --locked
+          cargo install --path ./foundry/crates/forge --profile local --force --locked
 
-      - name: Cache - save anvil binary
+      - name: Cache - save foundry binaries
         uses: actions/cache/save@v3
         if: always()
         with:
-          path: ~/.cargo/bin/anvil
-          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-anvil
+          path: |
+            ~/.cargo/bin/anvil
+            ~/.cargo/bin/forge
+          key: ${{ runner.os }}-${{ steps.foundry-hash.outputs.hash }}-foundry
 
       - name: cargo test
         run: cargo test --workspace --all-features

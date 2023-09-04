@@ -59,7 +59,7 @@ jobs:
           key: ${{ runner.os }}-foundry-${{ steps.foundry-hash.outputs.hash }}
 
       - name: cargo test
-        run: cargo test --workspace --all-features
+        run: RUST_LOG=error cargo test --workspace --all-features -- --nocapture
 
   clippy:
     name: clippy

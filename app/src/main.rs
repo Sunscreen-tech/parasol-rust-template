@@ -223,19 +223,11 @@ mod tests {
                 .args(["--private-key", &private_key])
                 .args(["--root", sunscreen_contracts_path])
                 .arg("./src/FHE.sol:FHE")
-                .output()?;
-
-            // debugging
-            let stdout = String::from_utf8_lossy(&json_output.stdout);
-            dbg!(&stdout);
-            let stderr = String::from_utf8_lossy(&json_output.stderr);
-            dbg!(&stderr);
-
-            let json_val: Value = serde_json::from_slice(&json_output.stdout)?;
-            dbg!(&json_val);
+                .output()?
+                .stdout;
+            let json_val: Value = serde_json::from_slice(&json_output)?;
             let fhe_addr =
                 json_val.get("deployedTo").expect("obj").as_str().expect("address string");
-            dbg!(&fhe_addr);
 
             // Deploy Counter.sol
             let lib_link = format!("lib/sunscreen-contracts/src/FHE.sol:FHE:{fhe_addr}");
@@ -249,19 +241,12 @@ mod tests {
                 .args(["--root", contracts_path])
                 .args(["--libraries", &lib_link])
                 .arg("./src/Counter.sol:Counter")
-                .output()?;
+                .output()?
+                .stdout;
 
-            // debugging
-            let stdout = String::from_utf8_lossy(&json_output.stdout);
-            dbg!(&stdout);
-            let stderr = String::from_utf8_lossy(&json_output.stderr);
-            dbg!(&stderr);
-
-            let json_val: Value = serde_json::from_slice(&json_output.stdout)?;
-            dbg!(&json_val);
+            let json_val: Value = serde_json::from_slice(&json_output)?;
             let counter_addr =
                 json_val.get("deployedTo").expect("obj").as_str().expect("address string");
-            dbg!(&counter_addr);
 
             Ok(Address::from_str(counter_addr)?)
         }

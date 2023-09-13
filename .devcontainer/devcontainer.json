@@ -1,0 +1,6 @@
+{
+  "image": "mcr.microsoft.com/devcontainers/rust:latest",
+  "features": {
+  },
+  "build": { "dockerfile": "Dockerfile" }
+}

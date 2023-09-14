@@ -1,5 +1,29 @@
 {
   "features": {
+    "git": "os-provided",
+    "github-cli": "latest",
+    "docker-from-docker": "latest"
   },
-  "build": { "dockerfile": "Dockerfile" }
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "lldb.executable": "/usr/bin/lldb",
+        "files.watcherExclude": {
+          "**/target/**": true
+        },
+        "rust-analyzer.checkOnSave.command": "clippy"
+      },
+      "extensions": [
+        "vadimcn.vscode-lldb",
+        "mutantdino.resourcemonitor",
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "serayuzgur.crates",
+        "GitHub.copilot"
+      ]
+    }
+  },
+  "build": { "dockerfile": "Dockerfile" },
+  "postCreateCommand": ".devcontainer/postCreate.sh",
+  "remoteUser": "vscode"
 }

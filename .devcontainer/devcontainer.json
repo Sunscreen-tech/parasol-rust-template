@@ -19,7 +19,9 @@
         "rust-lang.rust-analyzer",
         "tamasfe.even-better-toml",
         "serayuzgur.crates",
-        "GitHub.copilot"
+        "GitHub.copilot",
+        "juanblanco.solidity",
+        "panicbit.cargo"
       ]
     }
   },

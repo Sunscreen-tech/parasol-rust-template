@@ -15,7 +15,7 @@ cast wallet new
 
 and get funds at https://faucet.sunscreen.tech.
 
-Documentation can be found at https://hackathon.sunscreen.tech."
+Documentation can be found at https://hackathon.sunscreen.tech.
 EOF
 
 # Do not print out an initial message.

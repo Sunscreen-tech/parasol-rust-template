@@ -26,6 +26,6 @@
     }
   },
   "build": { "dockerfile": "Dockerfile" },
-  "postCreateCommand": ".devcontainer/postCreate.sh",
+  "postCreateCommand": "chmod +x .devcontainer/postCreate.sh && bash .devcontainer/postCreate.sh",
   "remoteUser": "vscode"
 }

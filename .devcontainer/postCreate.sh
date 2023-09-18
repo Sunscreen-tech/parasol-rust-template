@@ -1,13 +1,12 @@
 #!/usr/bin/env bash
 
-# NOTE: We are abusing a race condition here to get the some
-# initial bash commands related to environmental variables set. The
-# postCreateCommand is run and then the container is connected to. Any
-# short running process will happen before the editor is launched, meaning
-# we can set a custom cargo and a custom rustup home before the editor
-# is launched.
+# NOTE: We are abusing a race condition here to get the some initial bash
+# commands related to environmental variables set. The postCreateCommand is run
+# and then the container is connected to, meaning that we have a small amount of
+# time where this script is run and no editor terminal is created. We use this
+# time to set custom container messages and set up a local copy of Rust.
 
-# Blank out the first message
+# Terminal launch help message
 read -r -d '' STARTUP_MESSAGE <<'EOF'
 Welcome to the Parasol testnet! You can create new account credentials by running 
 
@@ -25,7 +24,7 @@ sudo echo "" > /workspaces/.codespaces/shared/first-run-notice.txt
 echo "$STARTUP_MESSAGE" >> ~/.msg
 echo "cat ~/.msg" >> ~/.bashrc
 
-# Install rust for the current user
+# Specify Rust configuration and write to bashrc before bash runs.
 export RUSTUP_HOME=~/.rustup
 export CARGO_HOME=~/.cargo
 export RUSTUP_INIT_SKIP_PATH_CHECK=yes
@@ -40,10 +39,11 @@ git config pull.rebase true
 git pull
 git submodule update --init
 
+# Install forge dependencies; this command can take a few seconds
 forge install --root=./contracts
 
 # Remove the origin since we do not need it anymore
 git remote remove origin
 
-# Install rust
+# Install rust; this takes a while and hence must be last
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y

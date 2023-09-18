@@ -41,4 +41,3 @@ git branch --set-upstream-to=origin/main
 git config pull.rebase true
 git pull
 git submodule update --init
-

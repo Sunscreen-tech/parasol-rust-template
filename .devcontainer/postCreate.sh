@@ -36,7 +36,7 @@ echo "CARGO_HOME=$CARGO_HOME" >> ~/.bashrc
 git remote add origin https://github.com/Sunscreen-tech/parasol-rust-template.git
 git branch --set-upstream-to=origin/main
 git config pull.rebase true
-git pull
+git pull origin main
 git submodule update --init
 
 # Install forge dependencies; this command can take a few seconds

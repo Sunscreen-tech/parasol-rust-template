@@ -37,7 +37,7 @@ git remote add origin https://github.com/Sunscreen-tech/parasol-rust-template.gi
 git branch --set-upstream-to=origin/main
 git config pull.rebase true
 git pull origin main
-git submodule update --init
+git submodule update --init --recursive
 
 # Install forge dependencies; this command can take a few seconds
 forge install --root=./contracts

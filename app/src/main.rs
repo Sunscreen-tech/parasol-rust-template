@@ -1,4 +1,9 @@
-use std::{fs, path::PathBuf, str::FromStr, sync::Arc};
+use std::{
+    fs,
+    path::{Path, PathBuf},
+    str::FromStr,
+    sync::Arc,
+};
 
 use bindings::counter::Counter;
 use clap::{Parser, Subcommand, ValueEnum};
@@ -52,9 +57,6 @@ enum Commands {
         force: bool,
     },
 
-    /// Deploy counter contract to the network
-    Deploy,
-
     /// Increment the counter
     Increment {
         /// Address of deployed counter contract
@@ -77,13 +79,17 @@ async fn main() -> Result<()> {
 
     match args.command {
         Commands::Gen { force } => {
-            KeyStore::generate(args.key_store, force)?;
-        }
-        Commands::Deploy => {
-            let keys = KeyStore::init(args.key_store, args.wallet_key)?;
-            let client = keys.client(args.network)?;
-            let contract_addr = Counter::deploy(Arc::clone(&client), ())?.send().await?.address();
-            eprintln!("Contract deployed at address {:#?}", contract_addr);
+            let keys = KeyStore::generate(&args.key_store, force)?;
+
+            // Log messages to the user
+            eprintln!("Saved new keys under directory {}", args.key_store.display());
+            if args.network == NetworkOption::Parasol {
+                eprintln!(
+                    "Head to {}?address={:?} for some free SPETH!",
+                    PARASOL.faucet_url,
+                    keys.wallet.address()
+                );
+            }
         }
         Commands::Increment { contract_address } => {
             let keys = KeyStore::init(args.key_store, args.wallet_key)?;
@@ -115,7 +121,7 @@ impl KeyStore {
     const PUBLIC_KEY_PATH: &'static str = "fhe.pub";
 
     /// Generate new keys and save them to the specified directory.
-    fn generate(parent_dir: PathBuf, force: bool) -> Result<Self> {
+    fn generate(parent_dir: &Path, force: bool) -> Result<Self> {
         // Throw errors if necessary
         if !force {
             for file in [Self::WALLET_PATH, Self::PRIVATE_KEY_PATH, Self::PUBLIC_KEY_PATH] {
@@ -134,15 +140,6 @@ impl KeyStore {
         public_key.write(parent_dir.join(Self::PUBLIC_KEY_PATH))?;
         private_key.write(parent_dir.join(Self::PRIVATE_KEY_PATH))?;
         wallet.write(parent_dir.join(Self::WALLET_PATH))?;
-
-        // Log messages to the user
-        eprintln!("Saved new keys under directory {}", parent_dir.display());
-        eprintln!(
-            "Head to {}?address={:?} for some free SPETH!",
-            PARASOL.faucet_url,
-            wallet.address()
-        );
-
         Ok(Self { wallet, public_key, private_key })
     }
 
@@ -184,7 +181,11 @@ impl KeyStore {
 #[cfg(test)]
 mod tests {
 
+    use std::process::Command;
+
     use super::*;
+    use ethers::utils::hex::ToHex;
+    use serde_json::Value;
     use sunscreen_web3::testing::Node;
 
     struct Test {
@@ -200,10 +201,54 @@ mod tests {
             let node = Node::spawn();
             let (public_key, private_key) = generate_keys()?;
             let wallet: LocalWallet = node.anvil.keys()[0].clone().into();
+            let contract_addr = Self::deploy(&node, &wallet)?;
             let client = Arc::new(node.client(wallet));
-            let contract_addr = Counter::deploy(Arc::clone(&client), ())?.send().await?.address();
             let counter = Counter::new(contract_addr, client);
             Ok(Self { counter, private_key, public_key, _node: node })
+        }
+
+        fn deploy(node: &Node, wallet: &LocalWallet) -> Result<Address> {
+            let private_key = wallet.signer().to_bytes().encode_hex::<String>();
+            let rpc_url = node.anvil.endpoint();
+            let chain = format!("{}", node.anvil.chain_id());
+
+            // Deploy FHE.sol
+            let sunscreen_contracts_path =
+                concat!(env!("CARGO_MANIFEST_DIR"), "/../contracts/lib/sunscreen-contracts");
+            let json_output = Command::new("forge")
+                .arg("create")
+                .arg("--json")
+                .args(["--rpc-url", &rpc_url])
+                .args(["--chain", &chain])
+                .args(["--private-key", &private_key])
+                .args(["--root", sunscreen_contracts_path])
+                .arg("./src/FHE.sol:FHE")
+                .output()?
+                .stdout;
+            let json_val: Value = serde_json::from_slice(&json_output)?;
+            let fhe_addr =
+                json_val.get("deployedTo").expect("obj").as_str().expect("address string");
+
+            // Deploy Counter.sol
+            let lib_link = format!("lib/sunscreen-contracts/src/FHE.sol:FHE:{fhe_addr}");
+            let contracts_path = concat!(env!("CARGO_MANIFEST_DIR"), "/../contracts");
+            let json_output = Command::new("forge")
+                .arg("create")
+                .arg("--json")
+                .args(["--rpc-url", &rpc_url])
+                .args(["--chain", &chain])
+                .args(["--private-key", &private_key])
+                .args(["--root", contracts_path])
+                .args(["--libraries", &lib_link])
+                .arg("./src/Counter.sol:Counter")
+                .output()?
+                .stdout;
+
+            let json_val: Value = serde_json::from_slice(&json_output)?;
+            let counter_addr =
+                json_val.get("deployedTo").expect("obj").as_str().expect("address string");
+
+            Ok(Address::from_str(counter_addr)?)
         }
     }
 

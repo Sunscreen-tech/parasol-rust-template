@@ -6,11 +6,9 @@ import "../src/Counter.sol";
 
 contract CounterTest is Test {
     Counter public counter;
-    FHE public fhe;
 
     function setUp() public {
         counter = new Counter();
-        fhe = new FHE();
     }
 
     function testIncrement() public {
@@ -20,7 +18,7 @@ contract CounterTest is Test {
 
         // Decrypt
         bytes memory current_number_enc = counter.number();
-        uint256 current_number = fhe.decryptUint256(current_number_enc);
+        uint256 current_number = FHE.decryptUint256(current_number_enc);
 
         assertEq(current_number, 2);
     }
@@ -34,7 +32,7 @@ contract CounterTest is Test {
 
         // Decrypt
         bytes memory current_number_enc = counter.number();
-        uint256 current_number = fhe.decryptUint256(current_number_enc);
+        uint256 current_number = FHE.decryptUint256(current_number_enc);
 
         assertEq(current_number, 101);
     }
